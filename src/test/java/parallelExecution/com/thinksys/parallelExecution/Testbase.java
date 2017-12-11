@@ -1,5 +1,8 @@
 package parallelExecution.com.thinksys.parallelExecution;
 
+import java.io.File;
+import java.lang.reflect.Method;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -13,11 +16,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
+
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
+import com.relevantcodes.extentreports.model.Test;
+
 import Resources.utility;
 
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import pages1.IndexPage;
 import pages1.LoginPage;
 import pages1.MobilePage;
@@ -35,31 +41,34 @@ public class Testbase {
 	MyAccountsPage MyAccount; 
 	LoginPage login;
 	
-	public ExtentReports report;
-	public ExtentHtmlReporter htmlReporter;
-	public ExtentTest logger;
+	public static ExtentReports extent;
+	//public ExtentHtmlReporter htmlReporter;
+	public static ExtentTest logger;
 	
-   
+
 	@BeforeSuite
 	public void setup()
 	{
 		utils=new utility();
-		report = new ExtentReports();
-		 // Provide the Report Path
-		 //htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") + "/Reports/myExtentReport.html");
-		htmlReporter = new ExtentHtmlReporter("C:\\Eclipse\\com.thinksys.parallelExecution\\Reports\\myExtentReport.html");
-		 report.attachReporter(htmlReporter);
-		 report.setSystemInfo("Host Name", "Ashish-702HK");
-		 report.setSystemInfo("Env", "Automation Testing");
-		 report.setSystemInfo("User", "Ashish Mathur");
+		extent = new ExtentReports("C:\\Eclipse\\com.thinksys.parallelExecution\\Reports\\myExtentReport.html",true);
+		extent
+		.addSystemInfo("Host Name", "Thinksys")
+		.addSystemInfo("Environment", "QA-Thinksys")
+        .addSystemInfo("User Name", "Ashish Mathur");
+		
+		extent.loadConfig(new File(System.getProperty("user.dir")+"\\extent-config.xml"));
 	}
 	
 	  @Parameters("browser")
 	  @BeforeMethod
-	  public void beforeTest(String browser) {
+	  public void beforeMethod(String browser,Method method) {
 
+	  logger=extent.startTest(this.getClass().getSimpleName()+"::"+method.getName()+"- "+browser, method.getName());
+		    
 	  Browserfactory browserfactory=new Browserfactory(driver);
 	  driver=browserfactory.getBrowser(browser);
+	  
+	  logger.log(LogStatus.PASS, "Browser Launched Successfully");
 	
 	  Index=new IndexPage(driver);
 	  Mobile=new MobilePage(driver);
@@ -70,36 +79,36 @@ public class Testbase {
 
 	  @AfterMethod
 	  public void teardownMethod(ITestResult result)
-	 
+	  
 		{
 			if(result.getStatus()==ITestResult.FAILURE)
 			{
+				System.out.println("is driver null"+driver.equals(null)+":: result is: "+ result.getStatus());
 				String path= utils.captureScreenshoot(driver, result.getName());
-				//logger.log(LogStatus.FAIL,result.getName(), logger.addScreenCapture(path));
-				
+				logger.log(LogStatus.FAIL,result.getName(), logger.addScreenCapture(path));
 			}
 			
 			if(result.getStatus()==ITestResult.SUCCESS)
 			{
-				String path=  utils.captureScreenshoot(driver, result.getName());
-				//logger.log(LogStatus.FAIL,result.getName(), logger.addScreenCapture(path));
+				//String path=  utils.captureScreenshoot(driver, result.getName());
+				logger.log(LogStatus.PASS,result.getName());
 			}
+			
+			
 			 driver.quit();
+			 logger.log(LogStatus.PASS, "Browser Closed");
+			 extent.endTest(logger);
 		}
 	  
-	/*  @AfterMethod
-	  public void afterTest()
-	  {
-		  driver.quit();
-	  }*/
+	  
+	  
 	  
 	  @AfterSuite
 	  public void afterSuite()
 	  {
 		  
-		  report.flush();
-			
-			
-		  
+		   extent.flush();
+		   //extent.close();
+		 
 	  }
 }

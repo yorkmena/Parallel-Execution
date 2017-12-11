@@ -14,7 +14,7 @@ public class utility {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static String captureScreenshoot(WebDriver driver, String Filename)
+	public String captureScreenshoot(WebDriver driver, String Filename)
 	{
 		TakesScreenshot ts=(TakesScreenshot)driver;
 		File src=ts.getScreenshotAs(OutputType.FILE);

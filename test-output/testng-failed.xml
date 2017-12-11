@@ -1,25 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite guice-stage="DEVELOPMENT" name="Failed suite [Suite]" parallel="none">
-  <parameter name="browser" value="chrome"/>
-  <test name="Test1(failed)" parallel="none">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Suite]" parallel="methods">
+  <parameter name="browser" value="firefox"/>
+  <test name="Test1(failed)" parallel="methods">
     <parameter name="browser" value="chrome"/>
     <classes>
       <class name="parallelExecution.com.thinksys.parallelExecution.RegistrationTestCases">
         <methods>
           <include name="registration"/>
-          <include name="teardownMethod"/>
-          <include name="beforeTest"/>
+          <include name="verifyAccountInfoAfterRegistration"/>
+          <include name="registrationWithExistingEmail"/>
+          <include name="beforeMethod"/>
+          <include name="beforeMethod"/>
         </methods>
       </class> <!-- parallelExecution.com.thinksys.parallelExecution.RegistrationTestCases -->
       <class name="parallelExecution.com.thinksys.parallelExecution.LoginTestCases">
         <methods>
           <include name="teardownMethod"/>
-          <include name="afterSuite"/>
+          <include name="teardownMethod"/>
           <include name="setup"/>
-          <include name="beforeTest"/>
+          <include name="loginWithIncorrectPassword"/>
+          <include name="beforeMethod"/>
+          <include name="beforeMethod"/>
         </methods>
       </class> <!-- parallelExecution.com.thinksys.parallelExecution.LoginTestCases -->
     </classes>
   </test> <!-- Test1(failed) -->
+  <test name="Test2(failed)" parallel="methods">
+    <parameter name="browser" value="firefox"/>
+    <classes>
+      <class name="parallelExecution.com.thinksys.parallelExecution.RegistrationTestCases">
+        <methods>
+          <include name="verifyAccountInfoAfterRegistration"/>
+          <include name="registrationWithExistingEmail"/>
+          <include name="beforeMethod"/>
+          <include name="beforeMethod"/>
+        </methods>
+      </class> <!-- parallelExecution.com.thinksys.parallelExecution.RegistrationTestCases -->
+      <class name="parallelExecution.com.thinksys.parallelExecution.LoginTestCases">
+        <methods>
+          <include name="teardownMethod"/>
+          <include name="teardownMethod"/>
+          <include name="login"/>
+          <include name="setup"/>
+          <include name="loginWithIncorrectPassword"/>
+          <include name="beforeMethod"/>
+          <include name="beforeMethod"/>
+        </methods>
+      </class> <!-- parallelExecution.com.thinksys.parallelExecution.LoginTestCases -->
+    </classes>
+  </test> <!-- Test2(failed) -->
 </suite> <!-- Failed suite [Suite] -->
